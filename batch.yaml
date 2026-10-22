@@ -1,0 +1,103 @@
+filetype: batch
+
+detect:
+    filename: "(?i)(\\.bat$|\\.cmd$|(^|[\\\\/])\\.cmd_aliases$)"
+    header: '(?i)^\s*@?echo\s+(off|on)'
+
+rules:
+    - constant.number: '(?i)\b0x[0-9a-f]+\b'
+    - constant.number: '\b[0-9]+\b'
+
+    - constant.bool: '(?i)\b(true|false|on|off|yes|no)\b'
+
+    - constant: '(?i)\b(nul|con|prn|aux|clock\$|com[1-9]|lpt[1-9])\b'
+    - constant: '(?i):eof\b'
+
+    - special: '(?i)/[dlrf]\b'
+    - special: '(?i)(^|\s)/[A-Za-z?][A-Za-z0-9:_-]*'
+    - special: '(^|\s)--[A-Za-z0-9][A-Za-z0-9_-]*(=\S+)?'
+    - special: '(^|\s)-[A-Za-z][A-Za-z0-9_-]*'
+
+    - symbol.operator: '(?i)\b(equ|neq|lss|leq|gtr|geq)\b'
+
+    - statement: '(?i)\b(if|else|for|in|do|goto|call|exit|shift|setlocal|endlocal)\b'
+    - statement: '(?i)\b(not|exist|defined|errorlevel|cmdextversion)\b'
+
+    - statement: '(?i)\b(assoc|break|cd|chdir|cls|color|copy|date|del|dir|echo|erase|ftype|md|mkdir|mklink|move|path|pause|popd|prompt|pushd|rd|ren|rename|rmdir|set|start|time|title|type|ver|verify|vol)\b'
+
+    - statement: '(?i)\b(attrib|bcdedit|bitsadmin|certutil|chcp|chkdsk|choice|cipher|clip|cmd|comp|compact|convert|diskpart|dism|doskey|driverquery|eventcreate|expand|fc|find|findstr|fltmc|format|fsutil|getmac|gpresult|gpupdate|hostname|icacls|ipconfig|label|manage-bde|mode|more|mountvol|msiexec|net|netsh|netstat|nslookup|openfiles|ping|powercfg|query|quser|qwinsta|reg|regsvr32|replace|robocopy|route|runas|sc|schtasks|setx|sfc|shutdown|sort|subst|systeminfo|takeown|tar|taskkill|tasklist|timeout|tracert|tree|tzutil|wevtutil|where|whoami|wmic|xcopy)\b'
+
+    - statement: '(?i)\b(powershell|pwsh|wsl|bash|python3?|py|perl|ruby|node|npm|npx|pnpm|yarn|bun|deno|pip3?|pipx|uv|rye|poetry)\b'
+
+    - statement: '(?i)\b(git|gh|curl|wget|ssh|scp|sftp|rsync|docker|podman|kubectl|winget|choco|scoop|make|cmake|ninja|gcc|g\+\+|clang|clang\+\+|cargo|rustc|rustup|go|gofmt|java|javac|gradle|mvn|dotnet|msbuild|nuget|llvm-config|nasm|yasm)\b'
+
+    - statement: '(?i)\b(bat|fd|rg|ripgrep|lsd|eza|fzf|jq|yq|micro|vim|nvim|nano|less|tldr|fastfetch|neofetch|zoxide|dust|duf|bottom|btm|procs|sd|delta|hyperfine|aria2c|rclone|restic|ffmpeg|ffprobe|magick|gm)\b'
+    - statement: '(?i)\b7z\b'
+
+    - symbol.operator: '&&|\|\|'
+    - symbol.operator: '[0-9]*(>>?|<<?)(&[0-9-]+)?'
+    - symbol.operator: '[&|]'
+    - symbol.operator: '=='
+    - symbol.operator: '(\+=|-=|\*=|/=|%=|<<=|>>=|&=|\^=|\|=|<<|>>|\+\+|--|[+\-*/%&|^~=])'
+
+    - symbol.brackets: '[()]'
+
+    - underlined: '(?i)\b[A-Z]:\\[^\s"<>|]*'
+    - underlined: '\\\\[^\s"<>|]+'
+    - underlined: '(?i)\bhttps?://[^\s"<>]+'
+
+    - identifier.class: '(?i)\b[^\s"\\/:*?<>|]+\.(exe|com|bat|cmd|ps1|psm1|psd1|vbs|vbe|js|jse|wsf|wsh|py|pyw|pl|rb|sh)\b'
+    - identifier.class: '(?i)\b[^\s"\\/:*?<>|]+\.(json|jsonc|yaml|yml|toml|ini|cfg|conf|xml|reg|env|properties|csv|tsv)\b'
+
+    - symbol: '^\s*@'
+
+    - special: '\$\*'
+    - special: '\$[1-9]'
+    - special: '(?i)\$(T|G|L|B|\$)'
+
+    - identifier.var: '![A-Za-z_][A-Za-z0-9_]*!'
+    - identifier.var: '(?i)%~[fdpnxsatz]*[0-9]'
+    - identifier.var: '%[0-9*]'
+    - identifier.var: '(?i)%%?~?[fdpnxsatz]*[A-Za-z]'
+    - identifier.var: '%[A-Za-z_][^%\r\n]*%'
+
+    - constant: '(?i)%(cd|date|time|random|errorlevel|cmdcmdline|cmdextversion|highestnumanodenumber)%'
+    - constant: '(?i)%(computername|username|userdomain|userdomain_roamingprofile|userprofile|appdata|localappdata|programfiles|programfiles\(x86\)|programw6432|commonprogramfiles|commonprogramfiles\(x86\)|commonprogramw6432|programdata|windir|systemroot|systemdrive|homedrive|homepath|temp|tmp|os|pathext|path|comspec|allusersprofile|processor_architecture|processor_architew6432|processor_identifier|processor_level|processor_revision|number_of_processors|public|driverdata|psmodulepath|logonserver|sessionname)%'
+
+    - constant.specialChar: '\^[&|<>%^"()]'
+    - constant.specialChar: '\^!'
+    - constant.specialChar: '\^\s*$'
+    - constant.specialChar: '%%'
+
+    - constant.string:
+        start: '"'
+        end: '"'
+        rules:
+            - identifier.var: '![A-Za-z_][A-Za-z0-9_]*!'
+            - identifier.var: '(?i)%~[fdpnxsatz]*[0-9]'
+            - identifier.var: '%[0-9*]'
+            - identifier.var: '(?i)%%?~?[fdpnxsatz]*[A-Za-z]'
+            - identifier.var: '%[A-Za-z_][^%\r\n"]*%'
+
+            - constant: '(?i)%(cd|date|time|random|errorlevel|cmdcmdline|cmdextversion|highestnumanodenumber)%'
+            - constant: '(?i)%(computername|username|userdomain|userdomain_roamingprofile|userprofile|appdata|localappdata|programfiles|programfiles\(x86\)|programw6432|commonprogramfiles|commonprogramfiles\(x86\)|commonprogramw6432|programdata|windir|systemroot|systemdrive|homedrive|homepath|temp|tmp|os|pathext|path|comspec|allusersprofile|processor_architecture|processor_architew6432|processor_identifier|processor_level|processor_revision|number_of_processors|public|driverdata|psmodulepath|logonserver|sessionname)%'
+
+            - special: '\$\*'
+            - special: '\$[1-9]'
+            - special: '(?i)\$(T|G|L|B|\$)'
+
+            - constant.specialChar: '%%'
+
+    - identifier.class: '^\s*:[^:].*$'
+
+    - comment:
+        start: '^\s*::'
+        end: '$'
+        rules:
+            - todo: '(?i)\b(TODO|FIXME|NOTE|BUG|WARN|WARNING):?'
+
+    - comment:
+        start: '(?i)^\s*@?rem\b'
+        end: '$'
+        rules:
+            - todo: '(?i)\b(TODO|FIXME|XXX|NOTE|BUG|WARN|WARNING):?'
